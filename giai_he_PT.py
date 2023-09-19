@@ -6,7 +6,7 @@ def giai_he_phuong_trinh(A, B):
         X = np.dot(A_inv, B)
         return X
     except np.linalg.LinAlgError as e:
-        if "Singular matrix" in str(e):
+        if "matran" in str(e):
             return []
         else:
             raise e
