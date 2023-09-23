@@ -1,38 +1,89 @@
+from tkinter import*
+from tkinter import messagebox
 import numpy as np
 
-def giai_he_phuong_trinh(A, B):
+#tao cua so chinh
+w = Tk()
+w.title('giai he pt')
+
+#tao nhan va o nhap lieu cho bien
+lb_sobien = Label(w, text = 'hay nhap so bien')
+lb_sobien.grid(column = 0, row = 0)
+en_sobien = Entry(w, width = 5)
+en_sobien.grid(column = 1, row = 0)
+
+# tao o nhap lieu cho cac hang so va he so
+en_he_so = []
+en_hang_so=[]
+so_bien = 0
+
+def tinh_toan():
+    sobien = int(en_sobien.get())
+    heso = []
+    hangso=[]
+
+    for i in range(sobien):
+        o_heso = []
+        for j in range(sobien):
+            o_heso.append(float(en_he_so[i][j].get()))
+        heso.append(o_heso)
+        hangso.append(float(en_hang_so[i].get()))
+
+    #tao ma tra he so A va hang so b
+    A = np.array(heso)
+    b = np.array(hangso)
+
+    #giai he pt
     try:
-        A_inv = np.linalg.inv(A)
-        X = np.dot(A_inv, B)
-        return X
-    except np.linalg.LinAlgError as e:
-        if "matran" in str(e):
-            return []
-        else:
-            raise e
+        kq = np.linalg.solve(A,b)
+        kq_text = 'ket qua:\n'
+        for i in range(sobien):
+            kq_text +=f'x{i+1}= {kq[i]}\n'
+        kq_label.config(text = kq_text)
+    except np.linalg.LinAlgError:
+        kq_label.config(text = 'he phuong trinh vo nghiem.')
 
-# Nhập số phương trình và số ẩn từ người dùng
-n = int(input("Nhập số phương trình: "))
-m = int(input("Nhập số ẩn: "))
+def nhap():
+    global so_bien
+    so_bien = int(en_sobien.get())
 
-# Khởi tạo ma trận hệ số A và vector b
-A = np.zeros((n, m))
-B = np.zeros(n)
+    for en_row in en_he_so:
+        for entry in en_row:
+            entry.grib_forget()
 
-# Nhập giá trị cho ma trận A và vector B
-for i in range(n):
-    print(f"Nhập phương trình thứ {i + 1}:")
-    for j in range(m):
-        A[i][j] = float(input(f"Nhập hệ số a[{i + 1},{j + 1}]: "))
-    B[i] = float(input(f"Nhập b[{i + 1}]: "))
+    en_he_so.clear()
+    en_hang_so.clear()
 
-# Gọi hàm để giải hệ phương trình
-X = giai_he_phuong_trinh(A, B)
+    for i in range(so_bien):
+        o_heso= []
+        for j in range(so_bien):
+            label = Label(w, text = f'nhap a{i+1}{j+1}:')
+            en = Entry(w, width=5)
+            o_heso.append(en)
+            label.grid(row = i + 1, column = 2 * j)
+            en.grid(row = i +1, column = 2 * j + 1)
+        en_he_so.append(o_heso)
+        label_hangso = Label(w, text = f'nhap b{i+1}:')
+        en_hangso = Entry(w, width = 5)
+        en_hang_so.append(en_hangso)
+        en_hangso.grid(row = i +1, column = so_bien * 2 + 1)
+        label_hangso.grid(row = i + 1, column = so_bien *2)
 
-if len(X) > 0:
-    print("Nghiệm của hệ phương trình:")
-    print(X)
-elif len(X) == 0:
-    print("Hệ phương trình có vô số nghiệm.")
-else:
-    print("Hệ phương trình vô nghiệm.")
+bt1 = Button(w, text = 'cap nhat', command=nhap)
+bt1.grid(row = 0, column = 2)
+
+bt2 = Button(w, text='giai phuong trinh', command=tinh_toan)
+bt2.grid(row = 5, columnspan= 9)
+
+kq_label = Label(w, text = 'ket qua :')
+kq_label.grid(row = 6, columnspan= 7)
+
+w.mainloop()
+
+
+
+
+
+
+
+
